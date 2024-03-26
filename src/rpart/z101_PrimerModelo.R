@@ -28,57 +28,6 @@ dtrain %>% group_by(clase_ternaria) %>% count()
 
 dapply <- dataset[foto_mes == 202109] # defino donde voy a aplicar el modelo
 
-
-######################
-
-library(rpart)
-
-# Supongamos que 'dtrain' es tu conjunto de entrenamiento y 'clase_ternaria' tu variable objetivo
-
-# 1. Definir el espacio de hiperparámetros
-cp_values <- seq(0.01, 0.1, by = 0.01)
-minsplit_values <- c(200, 400, 600, 800)
-minbucket_values <- c(50, 100, 200, 300)
-maxdepth_values <- c(4, 6, 8, 10)
-
-# Estructura para guardar los resultados
-results <- expand.grid(cp = cp_values, minsplit = minsplit_values, minbucket = minbucket_values, maxdepth = maxdepth_values, Accuracy = NA_real_)
-
-# 2. Bucle sobre la grilla de hiperparámetros y entrenar modelos
-counter <- 1
-for(cp in cp_values) {
-  for(minsplit in minsplit_values) {
-    for(minbucket in minbucket_values) {
-      for(maxdepth in maxdepth_values) {
-        set.seed(123) # Para reproducibilidad
-        model <- rpart(
-          formula = "clase_ternaria ~ .",
-          data = dtrain,
-          xval = 0,
-          control = rpart.control(cp = cp, minsplit = minsplit, minbucket = minbucket, maxdepth = maxdepth)
-        )
-        
-        # 3. Evaluar el modelo (por ejemplo, usando la precisión como métrica)
-        # Aquí necesitarías aplicar tu modelo a un conjunto de validación o usar una técnica de validación cruzada
-        # Este es un ejemplo placeholder para el proceso de evaluación
-        pred <- predict(model, dtrain, type = "class")
-        accuracy <- sum(pred == dtrain$clase_ternaria) / nrow(dtrain)
-        
-        # Guardar el resultado
-        results$Accuracy[counter] <- accuracy
-        counter <- counter + 1
-      }
-    }
-  }
-}
-
-# 4. Encontrar la mejor combinación de hiperparámetros
-best_model_index <- which.max(results$Accuracy)
-best_parameters <- results[best_model_index, ]
-print(best_parameters)
-
-
-
 #############
 
 modelo <- rpart(
@@ -91,16 +40,11 @@ modelo <- rpart(
   maxdepth = 10
 ) # profundidad maxima del arbol
 
-
-###################
-
-
 # grafico el arbol
 prp(modelo,
         extra = 101, digits = -5,
         branch = 1, type = 4, varlen = 0, faclen = 0
 )
-
 
 # aplico el modelo a los datos nuevos
 prediccion <- predict(
@@ -122,10 +66,6 @@ dapply[, Predicted := as.numeric(prob_baja2 > 1 / 40)]
 
 ## CONTAR LOS 1 Predichos ###
 dapply %>% group_by(Predicted) %>% count()
-
-which(dapply$Predicted == 1) %>% length()
-
-
 
 
 #### PRUEBA #####
