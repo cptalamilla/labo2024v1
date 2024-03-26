@@ -81,29 +81,18 @@ print(best_parameters)
 
 #############
 
-# Cargar bibliotecas necesarias
-library(rpart)
-library(caret) # Para la función createDataPartition
+modelo <- rpart(
+  formula = "clase_ternaria ~ .",
+  data = dtrain, # los datos donde voy a entrenar
+  xval = 0,
+  cp = -1, # esto significa no limitar la complejidad de los splits
+  minsplit = 600, # minima cantidad de registros para que se haga el split
+  minbucket = 200, # tamaño minimo de una hoja
+  maxdepth = 10
+) # profundidad maxima del arbol
 
-# Dividir el dataset en entrenamiento y prueba
-set.seed(123) # Para reproducibilidad
-indices_train <- createDataPartition(dtrain$clase_ternaria, p = 0.7, list = FALSE)
-datos_entrenamiento <- dtrain[indices_train, ]
-datos_prueba <- dtrain[-indices_train, ]
 
 ###################
-
-# genero el modelo,  aqui se construye el arbol
-# quiero predecir clase_ternaria a partir de el resto de las variables
-modelo <- rpart(
-        formula = "clase_ternaria ~ .",
-        data = datos_entrenamiento, # los datos donde voy a entrenar
-        xval = 0,
-        cp = -1, # esto significa no limitar la complejidad de los splits
-        minsplit = 600, # minima cantidad de registros para que se haga el split
-        minbucket = 200, # tamaño minimo de una hoja
-        maxdepth = 10
-) # profundidad maxima del arbol
 
 
 # grafico el arbol
@@ -141,6 +130,30 @@ which(dapply$Predicted == 1) %>% length()
 
 #### PRUEBA #####
 
+# Cargar bibliotecas necesarias
+library(rpart)
+library(caret) # Para la función createDataPartition
+
+# Dividir el dataset en entrenamiento y prueba
+set.seed(123) # Para reproducibilidad
+indices_train <- createDataPartition(dtrain$clase_ternaria, p = 0.7, list = FALSE)
+datos_entrenamiento <- dtrain[indices_train, ]
+datos_prueba <- dtrain[-indices_train, ]
+
+# genero el modelo,  aqui se construye el arbol
+# quiero predecir clase_ternaria a partir de el resto de las variables
+modelo <- rpart(
+  formula = "clase_ternaria ~ .",
+  data = datos_entrenamiento, # los datos donde voy a entrenar
+  xval = 0,
+  cp = -1, # esto significa no limitar la complejidad de los splits
+  minsplit = 600, # minima cantidad de registros para que se haga el split
+  minbucket = 200, # tamaño minimo de una hoja
+  maxdepth = 10
+) # profundidad maxima del arbol
+
+
+
 # aplico el modelo a los datos nuevos
 prediccion_p <- predict(
   object = modelo,
@@ -159,21 +172,12 @@ datos_prueba[, prob_baja2 := prediccion_p[, "BAJA+2"]]
 #  con probabilidad de BAJA+2 mayor  a  1/40
 datos_prueba[, Predicted := as.numeric(prob_baja2 > 1 / 40)]
 
-## Contar Predicciones sobre reales ###
-datos_prueba %>% group_by(Predicted) %>% count() # predicciones estimulos
-
-(datos_prueba$clase_ternaria == "BAJA+2") %>% sum() # cantidad real de baja+2
-
 estimulos = datos_prueba$Predicted == 1
-#estimulos %>% table()
 estimulos = estimulos %>% sum()
 
 baja2_real = datos_prueba$clase_ternaria == "BAJA+2"
 
-#baja2_real %>% table()
-
 aciertos = (estimulos & baja2_real) %>% sum()
-
 ganancia = (aciertos * 117000) - (estimulos - aciertos) * 3000
 
 
