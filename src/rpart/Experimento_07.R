@@ -38,4 +38,3 @@ dataset %>%
   scale_y_log10()
 
 dataset %>% summary()
-
