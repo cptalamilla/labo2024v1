@@ -7,8 +7,19 @@ require("parallel")
 
 PARAM <- list()
 # reemplazar por las propias semillas
-PARAM$semillas <- c(102191, 200177, 410551, 552581, 892237)
-
+PARAM$semillas <- c(100019, 110023, 120041, 130043, 140053,
+100073,
+200041,
+100417,
+102539,
+100183,
+100023,
+100073,
+200041,
+100417,
+102539,
+100183,
+100023)
 #------------------------------------------------------------------------------
 # particionar agrega una columna llamada fold a un dataset que consiste
 #  en una particion estratificada segun agrupa
@@ -78,7 +89,7 @@ ArbolEstimarGanancia <- function(semilla, param_basicos) {
 #------------------------------------------------------------------------------
 
 # Aqui se debe poner la carpeta de la computadora local
-setwd("~/buckets/b1/") # Establezco el Working Directory
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1") # Establezco el Working Directory
 # cargo los datos
 
 # cargo los datos
@@ -124,3 +135,4 @@ tb_salida[, mean(ganancia_test)]
 tb_salida[, lapply(.SD, mean)]
 
 # desvio estandar Distribucion Binomial   sqrt( n * p * (1-p) )
+

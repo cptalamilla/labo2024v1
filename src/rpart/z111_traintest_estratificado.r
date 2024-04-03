@@ -5,8 +5,12 @@ require("data.table")
 require("rpart")
 
 PARAM <- list()
-PARAM$semilla <- 102191
-
+PARAM$semilla <- 141223
+100019
+110023
+120041
+130043
+140053
 #------------------------------------------------------------------------------
 # particionar agrega una columna llamada fold a un dataset
 #  que consiste en una particion estratificada segun agrupa
@@ -33,7 +37,7 @@ particionar <- function(
 
 # Aqui se debe poner la carpeta de la computadora local
 # Establezco el Working Directory
-setwd("X:\\gdrive\\austral2023r\\")
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
 
 # cargo los datos
 dataset <- fread("./datasets/dataset_pequeno.csv")
@@ -41,6 +45,7 @@ dataset <- fread("./datasets/dataset_pequeno.csv")
 # trabajo solo con los datos con clase, es decir 202107
 dataset <- dataset[clase_ternaria != ""]
 
+setorder(dataset, internet)
 # particiono estratificadamente el dataset
 # Cambiar por la primer semilla de cada uno !
 particionar(dataset, division = c(7, 3), 
@@ -49,10 +54,11 @@ particionar(dataset, division = c(7, 3),
 
 param_basicos <- list(
   "cp" = -1, # complejidad minima
-  "minsplit" = 400, # minima cantidad de regs en un nodo para hacer el split
-  "minbucket" = 10, # minima cantidad de regs en una hoja
-  "maxdepth" = 8 # profundidad máxima del arbol
+  "minsplit" = 450, # minima cantidad de regs en un nodo para hacer el split
+  "minbucket" = 255, # minima cantidad de regs en una hoja
+  "maxdepth" = 6 # profundidad máxima del arbol
 )
+
 
 # genero el modelo
 # quiero predecir clase_ternaria a partir del resto
