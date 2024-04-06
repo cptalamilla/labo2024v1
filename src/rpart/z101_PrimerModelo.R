@@ -8,7 +8,7 @@ require("rpart.plot")
 require('tidyverse')
 # Aqui se debe poner la carpeta de la materia de SU computadora local
 setwd("X:\\gdrive\\labo2024v1\\") # Establezco el Working Directory
-
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
 # cargo el dataset
 dataset <- fread("./datasets/dataset_pequeno.csv")
 
@@ -64,14 +64,16 @@ negativeWeight = 1.0 / (nrow(subset(dtrain, clase_ternaria != 'CONTINUA')) / nro
 pesos_vector <- ifelse(dtrain$clase_ternaria != "CONTINUA", 2, 1)
 
 
+
+
 modelo <- rpart(
   formula = "clase_ternaria ~ .",
   data = dtrain, # los datos donde voy a entrenar
   xval = 0,
-  cp = -0.5, # esto significa no limitar la complejidad de los splits
-  minsplit = 550, # minima cantidad de registros para que se haga el split
-  minbucket = 160, # tamaño minimo de una hoja
-  maxdepth = 6, 
+  cp = -0.5308669, # esto significa no limitar la complejidad de los splits
+  minsplit = 1568, # minima cantidad de registros para que se haga el split
+  minbucket = 5, # tamaño minimo de una hoja
+  maxdepth = 3, 
   #weights = pesos_vector
 ) # profundidad maxima del arbol
 
@@ -108,6 +110,7 @@ dir.create("./exp/")
 dir.create("./exp/KA2001")
 
 # solo los campos para Kaggle
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
 fwrite(dapply[, list(numero_de_cliente, Predicted)],
        file = "./exp/KA2001/K101_001.csv",
        sep = ","

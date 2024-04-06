@@ -127,11 +127,11 @@ tb_grid_search <- data.table(bucket=integer(),
 # itero por los loops anidados para cada hiperparametro
 
 # Definiendo los rangos para los nuevos parámetros
-vmin_bucket = seq(110, 1000, 200)
-vmin_split = seq(200, 1000, 200)
-cps = seq(-0.5, -0.4, 0.2)  # Por ejemplo, valores de complejidad de poda
-max_depths = seq(4, 8, 1)  # Ejemplo de profundidades máximas
-pesos <- c(2, 4, 8, 16, 32, 64) # Vector de pesos a probar
+vmin_bucket = 240#seq(110, 1000, 200)
+vmin_split = 800#seq(200, 1000, 200)
+cps = -0.9#seq(-0.5, -0.4, 0.2)  # Por ejemplo, valores de complejidad de poda
+max_depths = 13#seq(4, 8, 1)  # Ejemplo de profundidades máximas
+pesos <- 1#c(2, 4, 8, 16, 32, 64) # Vector de pesos a probar
 expand.grid(vmin_bucket,vmin_split,cps , max_depths , pesos)
 
 # Inicializando la tabla para recopilar los resultados

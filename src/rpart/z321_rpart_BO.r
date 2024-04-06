@@ -191,7 +191,7 @@ EstimarGanancia <- function(x) {
 
 # Establezco el Working Directory
 setwd("~/buckets/b1/")
-
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
 #cargo MI semilla, que esta en MI bucket
 tabla_semillas <- fread( "./datasets//mis_semillas.txt" )
 ksemilla_azar <- tabla_semillas[ 1, semilla ]  # 1 es mi primer semilla
@@ -270,3 +270,11 @@ if (!file.exists(archivo_BO)) {
   run <- mboContinue(archivo_BO)
 }
 # retomo en caso que ya exista
+setwd("./exp/HT3210/")
+library(readr)
+HT321 <- read_delim("HT321.txt", delim = "\t", 
+                    escape_double = FALSE, trim_ws = TRUE)
+
+setDT(HT321)
+
+gan = HT321[order(-ganancia)][c(1, 2, 5, 10, 50, 100)]
