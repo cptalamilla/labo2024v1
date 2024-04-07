@@ -17,9 +17,9 @@ require("ggplot2")
 
 # cambiar aqui los parametros
 PARAM <- list()
-PARAM$minsplit <- 300
-PARAM$minbucket <- 20
-PARAM$maxdepth <- 11
+PARAM$minsplit <- 1819
+PARAM$minbucket <- 908
+PARAM$maxdepth <- 6
 
 #------------------------------------------------------------------------------
 # particionar agrega una columna llamada fold a un dataset
@@ -50,7 +50,7 @@ particionar <- function(data, division, agrupa = "", campo = "fold",
 # Aqui empieza el programa
 
 setwd("~/buckets/b1/") # Establezco el Working Directory
-
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
 #cargo MI amada primera semilla, que esta en MI bucket
 tabla_semillas <- fread( "./datasets//mis_semillas.txt" )
 ksemilla_azar <- tabla_semillas[ 1, semilla ]  # 1 es mi primera semilla
@@ -114,3 +114,4 @@ print( gra )
 
 cat( "Train gan max: ", dataset[fold==1, max(ganancia_acumulada)], "\n" )
 cat( "Test  gan max: ", dataset[fold==2, max(ganancia_acumulada)], "\n" )
+

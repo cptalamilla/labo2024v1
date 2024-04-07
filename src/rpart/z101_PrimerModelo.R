@@ -70,10 +70,10 @@ modelo <- rpart(
   formula = "clase_ternaria ~ .",
   data = dtrain, # los datos donde voy a entrenar
   xval = 0,
-  cp = -0.5308669, # esto significa no limitar la complejidad de los splits
-  minsplit = 1568, # minima cantidad de registros para que se haga el split
-  minbucket = 5, # tamaño minimo de una hoja
-  maxdepth = 3, 
+  cp = -0.8, # esto significa no limitar la complejidad de los splits
+  minsplit = 200, # minima cantidad de registros para que se haga el split
+  minbucket = 100, # tamaño minimo de una hoja
+  maxdepth = 4, 
   #weights = pesos_vector
 ) # profundidad maxima del arbol
 
@@ -203,18 +203,9 @@ indices_para_reducir <- sample(indices_unos, size = num_a_reducir)
 dapply[indices_para_reducir, Predicted := 1]
 
 
-gridsearch <- read_delim("exp/HT2020/gridsearch.txt", 
-                         delim = "\t", escape_double = FALSE, 
-                         trim_ws = TRUE)
-
-gridsearch %>% arrange(desc(ganancia_promedio))
 
 
-
-
-
-####
-# Asumiendo que tienes un dataframe llamado datos_entrenamiento y una columna clase_ternaria
+##### Asumiendo que tienes un dataframe llamado datos_entrenamiento y una columna clase_ternaria
 total_observaciones <- nrow(dtrain)
 frecuencias <- table(dtrain$clase_ternaria)
 
@@ -230,5 +221,113 @@ dapply$peso <- with(dapply, ifelse(clase_ternaria == "BAJA+1", pesos_clases["BAJ
 
 # Verificar que la longitud del vector de pesos es igual al número de filas en datos_entrenamiento
 length(dtrain$peso) == nrow(dtrain) # Esto debe ser TRUE
+
+
+
+
+
+### Prueba Generacion de archivos kagles masivos#### 
+library(readr)
+
+gridsearch <- fread("exp/HT2020/gridsearch.txt")
+
+
+hyperparams = unique(gridsearch[order(-ganancia_promedio)], by = "ganancia_promedio")[c(1, 2, 5, 10, 30, 46)]
+hyperparams
+
+
+# Asumiendo que tienes 'dtrain' y 'dapply' ya definidos como tus conjuntos de datos
+for (i in 1:nrow(hyperparams)) {
+  # Extraer los hiperparámetros de la fila actual
+  params <- hyperparams[i]
+  print(params$max_depth)
+  # Entrenar el modelo con los hiperparámetros de la fila actual
+  modelo <- rpart(
+    formula = "clase_ternaria ~ .",
+    data = dtrain,
+    xval = 0,
+    cp = params$max_depth,
+    minsplit = params$minsplit,
+    minbucket = params$minbucket,
+    maxdepth = params$cp
+    # weights = pesos_vector (si lo necesitas)
+  )
+  
+
+  # Aplicar el modelo a 'dapply'
+  prediccion <- predict(
+    object = modelo,
+    newdata = dapply,
+    type = "prob"
+  )
+  
+  # Agregar la columna de probabilidad de BAJA+2 a dapply
+  dapply[, prob_baja2 := prediccion[, "BAJA+2"]]
+  print(dapply$prob_baja2)
+  # Calcular la columna 'Predicted'
+  dapply[, Predicted := as.numeric(prob_baja2 > 0.025)]
+  print(table(dapply$Predicted))
+  # Generar el nombre del archivo CSV basado en el índice del bucle
+  filename <- sprintf("./exp/KA2001/K101_%03d.csv", i)
+  
+  # Solo guardar los campos necesarios para Kaggle
+  fwrite(dapply[, .(numero_de_cliente, Predicted)], file = filename, sep = ",")
+}
+
+
+
+
+
+
+
+modelo <- rpart(
+  formula = "clase_ternaria ~ .",
+  data = dtrain, # los datos donde voy a entrenar
+  xval = 0,
+  cp = -0.5308669, # esto significa no limitar la complejidad de los splits
+  minsplit = 1568, # minima cantidad de registros para que se haga el split
+  minbucket = 5, # tamaño minimo de una hoja
+  maxdepth = 3, 
+  #weights = pesos_vector
+) # profundidad maxima del arbol
+
+
+
+# aplico el modelo a los datos nuevos
+prediccion <- predict(
+  object = modelo,
+  newdata = dapply,
+  type = "prob"
+)
+
+# prediccion es una matriz con TRES columnas,
+# llamadas "BAJA+1", "BAJA+2"  y "CONTINUA"
+# cada columna es el vector de probabilidades
+
+# agrego a dapply una columna nueva que es la probabilidad de BAJA+2
+dapply[, prob_baja2 := prediccion[, "BAJA+2"]]
+
+# solo le envio estimulo a los registros
+#  con probabilidad de BAJA+2 mayor  a  1/40
+dapply[, Predicted := as.numeric(prob_baja2 > 0.025)]
+
+## CONTAR LOS 1 Predichos ###
+dapply %>% group_by(Predicted) %>% count()
+
+# genero el archivo para Kaggle
+# primero creo la carpeta donde va el experimento
+dir.create("./exp/")
+dir.create("./exp/KA2001")
+
+# solo los campos para Kaggle
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
+fwrite(dapply[, list(numero_de_cliente, Predicted)],
+       file = "./exp/KA2001/K101_001.csv",
+       sep = ","
+)
+
+
+
+fread("exp/KA2001/K101_005.csv") %>% group_by(Predicted) %>% count()
 
 

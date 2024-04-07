@@ -16,8 +16,8 @@ PARAM$experimento <- 3510
 # parameetros rpart
 PARAM$rpart_param <- list(
   "cp" = -1,
-  "minsplit" = 250,
-  "minbucket" = 100,
+  "minsplit" = 50,
+  "minbucket" = 5,
   "maxdepth" = 14
 )
 
@@ -33,8 +33,8 @@ PARAM$num_trees_max <- 500
 #------------------------------------------------------------------------------
 # Aqui comienza el programa
 
-setwd("~/buckets/b1/") # Establezco el Working Directory
-
+#setwd("~/buckets/b1/") # Establezco el Working Directory
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
 #cargo MI semilla, que esta en MI bucket
 tabla_semillas <- fread( "./datasets//mis_semillas.txt" )
 ksemilla_azar <- tabla_semillas[ 1, semilla ]  # 1 es mi primer semilla
@@ -127,3 +127,4 @@ for (arbolito in 1:PARAM$num_trees_max) {
     cat(arbolito, " ")
   }
 }
+
