@@ -35,7 +35,7 @@ PARAM$hs <- makeParamSet(
 )
 # minbuket NO PUEDE ser mayor que la mitad de minsplit
 
-
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
 #------------------------------------------------------------------------------
 # genera un vector de numeros primos aleatorios
 # partiendo de MI primer semilla
@@ -43,7 +43,7 @@ PARAM$hs <- makeParamSet(
 generarprimos <- function( qty ){
 
   # recupero MI primer semilla
-  tabla_semillas <- fread( "./datasets//mis_semillas.txt" )
+  tabla_semillas <- fread( "./datasets/mis_semillas.txt" )
   mi_semilla <- tabla_semillas[ 1, semilla ]  # 1 es mi primer semilla
 
   primos_universo  <- generate_primes(min=100000, max=1000000)  #genero TODOS los numeros primos entre 100k y 1M
@@ -221,8 +221,8 @@ EstimarGanancia <- function(x) {
 # Aqui empieza el programa
 
 # Establezco el Working Directory
-setwd("~/buckets/b1/")
-
+#setwd("~/buckets/b1/")
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
 # genero PARAM$xval_repeated   numeros primos
 kvector_semillas <- generarprimos( PARAM$xval_repeated )
 
@@ -300,3 +300,12 @@ if (!file.exists(archivo_BO)) {
   run <- mboContinue(archivo_BO)
 }
 # retomo en caso que ya exista
+
+
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
+
+HT333 <- fread("./exp/HT3330/HT333.txt")
+
+
+HT333[order(-ganancia)][c(1, 2, 5, 10, 50, 100)]
+
