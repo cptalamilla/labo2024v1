@@ -307,5 +307,5 @@ setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
 HT333 <- fread("./exp/HT3330/HT333.txt")
 
 
-HT333[order(-ganancia)][c(1, 2, 5, 10, 50, 100)]
-
+HT333_1 = HT333[order(-ganancia)][c(1, 2, 5, 10, 50, 100)]
+HT333_1
