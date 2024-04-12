@@ -194,8 +194,8 @@ EstimarGanancia_ranger <- function(x) {
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Aqui comienza el programa
-
-setwd("~/buckets/b1/") # Establezco el Working Directory
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
+#setwd("~/buckets/b1/") # Establezco el Working Directory
 
 # cargo MI semilla, que esta en MI bucket
 tabla_semillas <- fread( "./datasets//mis_semillas.txt" )
@@ -280,3 +280,14 @@ if (!file.exists(kbayesiana)) {
 } else {
   run <- mboContinue(kbayesiana)
 } # retomo en caso que ya exista
+
+
+
+
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
+
+HT4330 <- fread("./exp/HT4330/HT4330.txt")
+
+
+HT4330 = HT4330[order(-ganancia)][c(1, 2, 5, 10, 50, 100)]
+HT4330

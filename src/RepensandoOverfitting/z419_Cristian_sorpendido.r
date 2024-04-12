@@ -13,8 +13,8 @@ require("data.table")
 require("rpart")
 require("rpart.plot")
 
-setwd("~/buckets/b1/") # establezco la carpeta donde voy a trabajar
-
+#setwd("~/buckets/b1/") # establezco la carpeta donde voy a trabajar
+setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
 # cargo el dataset
 dataset <- fread( "./datasets/dataset_pequeno.csv")
 
