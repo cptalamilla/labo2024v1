@@ -81,13 +81,14 @@ setwd("~/buckets/b1")# Establezco el Working Directory
 # Dataset__________________________________________________________
 
 dataset <- fread('datasets/dataset_pequeno.csv' )
-dataset_original = dataset
+dataset_original = fread('datasets/dataset_pequeno.csv' )
 ncol(dataset)
 
 #__________________________________________________________________
 # Limpieza Datos __________________________________________________
 
 # Excluir las variables especificadas
+id_cols = dataset_original[, c("numero_de_cliente", "foto_mes", "clase_ternaria") ]
 dataset[, c("numero_de_cliente", "foto_mes", "clase_ternaria") := NULL]
 
 # Identificar las variables binarias
@@ -98,6 +99,7 @@ print(names(variables_binarias)[variables_binarias])
 
 # Obtener los nombres de las columnas que son numéricas y no binarias
 variables_numericas <- names(dataset)[!variables_binarias & sapply(dataset, is.numeric)]
+print(variables_numericas)
 
 # Normalizar las variables numéricas
 dataset[, (variables_numericas) := lapply(.SD, scale), .SDcols = variables_numericas]
@@ -139,6 +141,13 @@ dataset = dataset[,-(nulos$columnas_con_nulos), with = F]
 # Realizar el PCA
 pca_result <- prcomp(dataset, scale. = FALSE)
 
+componentes = pca_result$x
+
+dataset_componentes = cbind(id_cols, componentes) %>% as.data.frame() 
+
+dataset_componentes
+
+
 # Obtener los loadings de las componentes principales
 loadings <- pca_result$rotation
 
@@ -150,12 +159,21 @@ orden <- order(varianza_explicada_por_variable, decreasing = TRUE)
 
 # Obtener los nombres de las variables ordenadas
 nombres_variables_ordenados <- colnames(dataset)[orden]
+print(nombres_variables_ordenados)
 
 # Obtener la varianza explicada acumulada por cada componente
 varianza_acumulada <- cumsum(pca_result$sdev^2) / sum(pca_result$sdev^2)
 
 # Encontrar el número mínimo de componentes principales necesarias
 num_componentes_necesarias <- which.max(varianza_acumulada >= 0.95)
+print(num_componentes_necesarias)
+
+
+dataset_componentes <- dataset_componentes[,c(1:78)]
+dataset_componentes
+
+setDT(dataset_componentes)
+write.csv(dataset_componentes, 'datasets/dataset_pca_dt.csv')
 
 # Seleccionar solo las variables que explican el 95% de la variabilidad
 variables_maxima_variabilidad <- nombres_variables_ordenados[1:num_componentes_necesarias]

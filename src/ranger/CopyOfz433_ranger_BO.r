@@ -34,9 +34,9 @@ options(error = function() {
 # defino los parametros de la corrida, en una lista, la variable global  PARAM
 PARAM <- list()
 
-PARAM$experimento <- "HT4330"
+PARAM$experimento <- "Colab_PCA"
 
-PARAM$input$dataset <- "./datasets/dataset_pequeno.csv"
+PARAM$input$dataset <- "./datasets/dataset_pca.csv"
 PARAM$input$training <- c(202107) # los meses en los que vamos a entrenar
 
 PARAM$hyperparametertuning$iteraciones <- 100
@@ -50,9 +50,9 @@ PARAM$hyperparametertuning$NEG_ganancia <- -3000
 #  la letra L al final significa ENTERO
 # max.depth 0 significa profundidad infinita
 hs <- makeParamSet(
-  makeIntegerParam("num.trees", lower = 20L, upper = 500L),
-  makeIntegerParam("max.depth", lower = 1L, upper = 30L),
-  makeIntegerParam("min.node.size", lower = 1L, upper = 1000L),
+  makeIntegerParam("num.trees", lower = 20L, upper = 100L),
+  makeIntegerParam("max.depth", lower = 1L, upper = 20L),
+  makeIntegerParam("min.node.size", lower = 100L, upper = 1000L),
   makeIntegerParam("mtry", lower = 2L, upper = 50L)
 )
 
@@ -194,8 +194,8 @@ EstimarGanancia_ranger <- function(x) {
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
 # Aqui comienza el programa
-setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
-#setwd("~/buckets/b1/") # Establezco el Working Directory
+#setwd("~/Desktop/01_Austral_MDS/06_Labo1/labo1")
+setwd("~/buckets/b1/") # Establezco el Working Directory
 
 # cargo MI semilla, que esta en MI bucket
 tabla_semillas <- fread( "./datasets//mis_semillas.txt" )
@@ -203,7 +203,7 @@ ksemilla_azar1 <- tabla_semillas[ 1, semilla ]  # 1 es mi primer semilla
 ksemilla_azar2 <- tabla_semillas[ 2, semilla ]  # 2 es mi segunda semilla
 
 # cargo el dataset donde voy a entrenar el modelo
-dataset <- fread("./datasets/dataset_pequeno.csv", stringsAsFactors = TRUE)
+dataset <- fread("./datasets/dataset_pca.csv", stringsAsFactors = TRUE)
 
 dataset <- dataset[foto_mes %in% PARAM$input$training]
 
