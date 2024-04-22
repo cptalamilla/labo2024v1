@@ -33,9 +33,9 @@ options(error = function() {
 #  muy pronto esto se leera desde un archivo formato .yaml
 PARAM <- list()
 
-PARAM$experimento <- "HT4510"
+PARAM$experimento <- "LGBM_pca"
 
-PARAM$input$dataset <- "./datasets/dataset_pequeno.csv"
+PARAM$input$dataset <- "./datasets/dataset_pca.csv"
 PARAM$input$training <- c(202107) # los meses en los que vamos a entrenar
 
 # un undersampling de 0.1  toma solo el 10% de los CONTINUA
@@ -52,7 +52,7 @@ PARAM$hyperparametertuning$NEG_ganancia <- -3000
 # Aqui se cargan los bordes de los hiperparametros
 hs <- makeParamSet(
   makeNumericParam("learning_rate", lower = 0.01, upper = 0.3),
-  makeNumericParam("feature_fraction", lower = 0.2, upper = 1.0),
+  makeNumericParam("feature_fraction", lower = 1.0, upper = 1.0),
   makeIntegerParam("min_data_in_leaf", lower = 1L, upper = 8000L),
   makeIntegerParam("num_leaves", lower = 16L, upper = 1024L),
   makeIntegerParam("envios", lower = 5000L, upper = 15000L)

@@ -19,15 +19,6 @@ library(survey)
 #__________________________________________________________________
 # Funciones _______________________________________________________
 
-# Subir en la jerarquia de carpetas
-navigate_up <- function(directory, levels = 1) {
-  dir <- directory
-  for (i in 1:levels) {
-    dir <- dirname(dir)
-  }
-  return(dir)
-}
-
 # Función para identificar columnas con valores nulos y contarlos
 analizar_nulos <- function(dt) {
   # Asegurarse de que el input es un data.table
@@ -47,28 +38,6 @@ analizar_nulos <- function(dt) {
   list(
     columnas_nulos_df = nulos_df,
     columnas_con_nulos = columnas_con_nulos
-  )
-}
-
-# Función para identificar columnas con valores infinitos y contarlos
-analizar_inf <- function(dt) {
-  # Asegurarse de que el input es un data.table
-  if (!is.data.table(dt)) {
-    stop("El input debe ser un data.table")
-  }
-  
-  # Paso 1: Encontrar columnas con valores infinitos y contarlos
-  inf_df <- sapply(dt, function(x) sum(is.infinite(x))) # Cuenta los infs por columna
-  inf_df <- data.frame(columna = names(inf_df), n_inf = inf_df) # Convertir a data.frame
-  inf_df <- inf_df[inf_df$n_inf > 0, ] # Filtrar columnas con al menos un inf
-  
-  # Paso 2: Obtener los nombres de las columnas con valores infinitos
-  columnas_con_infinitos <- inf_df$column_name[inf_df$n_inf > 0]
-  
-  # Devolver una lista con ambos componentes
-  list(
-    columnas_inf_df = inf_df,
-    columnas_con_infinitos = columnas_con_infinitos
   )
 }
 
@@ -105,31 +74,8 @@ print(variables_numericas)
 dataset[, (variables_numericas) := lapply(.SD, scale), .SDcols = variables_numericas]
 summary(dataset$mcuenta_debitos_automaticos)#chequeo el cambio
 
-# Eliminar filas con valores faltantes
+# Eliminar columnas  con valores faltantes
 #dataset <- dataset[complete.cases(dataset), ]
-
-
-# Función para identificar columnas con valores nulos y contarlos
-analizar_nulos <- function(dt) {
-  # Asegurarse de que el input es un data.table
-  if (!is.data.table(dt)) {
-    stop("El input debe ser un data.table")
-  }
-  
-  # Paso 1: Encontrar columnas con valores nulos y contarlos
-  nulos_df <- sapply(dt, function(x) sum(is.na(x))) # Cuenta los NAs por columna
-  nulos_df <- data.frame(columna = names(nulos_df), n_nulos = nulos_df) # Convertir a data.frame
-  nulos_df <- nulos_df[nulos_df$n_nulos > 0, ] # Filtrar columnas con al menos un NA
-  
-  # Paso 2: Obtener los nombres de las columnas con valores nulos
-  columnas_con_nulos <- names(dt)[colSums(is.na(dt)) > 0]
-  
-  # Devolver una lista con ambos componentes
-  list(
-    columnas_nulos_df = nulos_df,
-    columnas_con_nulos = columnas_con_nulos
-  )
-}
 
 nulos = analizar_nulos(dataset)
 
@@ -175,39 +121,4 @@ dataset_componentes
 setDT(dataset_componentes)
 write.csv(dataset_componentes, 'datasets/dataset_pca_dt.csv')
 
-# Seleccionar solo las variables que explican el 95% de la variabilidad
-variables_maxima_variabilidad <- nombres_variables_ordenados[1:num_componentes_necesarias]
 
-# Crear la data table con las variables que explican el 95% de la variabilidad
-maxima_variabilidad <- data.table(
-  Orden = seq_along(variables_maxima_variabilidad),
-  Nombre_Variable = variables_maxima_variabilidad,
-  Varianza_Explicada = varianza_explicada_por_variable[variables_maxima_variabilidad]
-)
-
-# Mostrar la data table de máxima variabilidad
-print(maxima_variabilidad)
-
-# Eliminar Nulos --------------- 
-
-nulos = analizar_nulos(dataset)
-nulos$columnas_nulos_df %>% arrange(n_nulos)
-nulos$columnas_con_nulos
-
-
-dataset[,-(nulos$columnas_con_nulos), with = F] %>% dim()
-zero_columns = dataset[,nulos$columnas_con_nulos, with = F] %>% colnames()
-
-# Eliminar columnas nulas
-for (col in zero_columns) {
-  dataset[, (col) := NULL]
-}
-
-ncol(dataset)
-
-# Eliminar columnas nulas
-for (col in inf_columns) {
-  dataset[, (col) := NULL]
-}
-
-ncol(dataset)
