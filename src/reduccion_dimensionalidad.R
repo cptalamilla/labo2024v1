@@ -89,6 +89,10 @@ pca_result <- prcomp(dataset, scale. = FALSE)
 
 componentes = pca_result$x
 
+varianza_acumulada <- cumsum(pca_result$sdev^2) / sum(pca_result$sdev^2)
+num_componentes <- which(varianza_acumulada >= 0.95)[1]
+
+
 dataset_componentes = cbind(id_cols, componentes) %>% as.data.frame() 
 
 dataset_componentes
